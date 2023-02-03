@@ -1,11 +1,14 @@
 import tkinter as tk
+#from tkinter import Spinbox,Tk,PhotoImage,Label,Frame,Entry,Button
 from tkinter import messagebox
 import numpy as np
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
+#from numpy import linalg
+
 
 root = tk.Tk()
 root.title("Linear Equation Solver")
+photo = tk.PhotoImage(file = "icon.ico")
+root.iconphoto(False, photo)
 
 m_size = 2
 n_size = 2
@@ -95,11 +98,3 @@ label2 = tk.Label(root, text="Vector b")
 label2.grid(row=0, column=n_size, padx=10, pady=10)
 
 root.mainloop()
-
-# Currently Graph is WIP, i do not know which one is more appropriate
-
-# fig = Figure(figsize=(5, 4), dpi=100)
-# canvas = FigureCanvasTkAgg(fig, root)
-# fig = Figure(figsize=(5, 4), dpi=100)
-# canvas = FigureCanvasTkAgg(fig, root)
-# canvas.get_tk_widget().grid(row=5, column=0, columnspan=4, padx=10, pady=10)
