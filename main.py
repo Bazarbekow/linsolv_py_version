@@ -7,7 +7,7 @@ import numpy as np
 
 root = tk.Tk()
 root.title("Linear Equation Solver")
-photo = tk.PhotoImage(file = "icon.ico")
+photo = tk.PhotoImage(file = "icon.png")
 root.iconphoto(False, photo)
 
 m_size = 2
