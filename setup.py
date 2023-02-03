@@ -11,7 +11,7 @@ executables = [Executable("main.py", base=base, targetName = "LES Solver", icon=
 # Build the .exe file
 setup(
    name = "LES Solver",
-   options={"build_exe": {"packages": ["tkinter"], "include_files": ["icon.ico",]}},
+   options={"build_exe": {"packages": ["tkinter"], "include_files": ["icon.ico","icon.png"]}},
    version = "1.0",
    description = "This app solves m x n LESystems",
    executables = executables
