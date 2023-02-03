@@ -4,6 +4,66 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
+root = tk.Tk()
+root.title("Linear Equation Solver")
+
+m_size = 2
+n_size = 2
+m_size_spinbox = tk.Spinbox(root, from_=2, to=5, command = lambda:create_entries(m_size, n_size))
+m_size_spinbox.grid(row=1, column=n_size + 4)
+m_size = int(m_size_spinbox.get())
+
+n_size_spinbox = tk.Spinbox(root, from_=2, to=5, command = lambda:create_entries(m_size, n_size))
+n_size_spinbox.grid(row=1, column=n_size + 5)
+n_size = int(n_size_spinbox.get())
+
+m_size_label = tk.Label(root, text="Rows of A matrix:")
+m_size_label.grid(row=0, column=n_size + 4)
+
+n_size_label = tk.Label(root, text="Columns of A matrix:")
+n_size_label.grid(row=0, column=n_size + 5)
+
+entries = []
+b_entries = []
+
+def clear_zero(event): #Untested function
+    widget = event.widget
+    if widget.get() == "0":
+        widget.delete(0, "end")
+
+def create_entries(m_size, n_size): #for matrice A
+    entries.clear()
+    b_entries.clear()
+    matrix_frame = tk.Frame(root)
+    matrix_frame.grid(row=1, column=0, columnspan=n_size, rowspan=m_size)
+    for i in range(m_size): # Generates m x n entry rows for the matrix A
+        entries.append([])
+        for j in range(n_size):
+            entry = tk.Entry(matrix_frame)
+            entry.grid(row=i, column=j)
+            entry.bind("<FocusIn>", clear_zero) # Theoretically, when field is selected, zero is deleted
+            if entry.get() == "":
+                entry.insert(0, "0")
+                entries[i].append(entry)
+            else: 
+                entries[i].append(entry)
+    for i in range(m_size): #Generates m x 1 entry rows for vector b
+        entry = tk.Entry(root)
+        entry.grid(row=i+1, column=m_size)
+        entry.bind("<FocusIn>", clear_zero)
+        if entry.get() == "":
+            entry.insert(0, "0")
+            b_entries.append(entry)
+        else: 
+            b_entries.append(entry)
+    #print(len(entries))
+    return matrix_frame
+
+matrix_frame = create_entries(m_size, n_size)
+
+def on_size_change():
+    pass
+
 def solve_linsys(A, b):
     try:
         x = np.linalg.solve(A, b)
@@ -14,67 +74,32 @@ def solve_linsys(A, b):
 
 def on_solve():
     try:
-        A = [[float(entry_1.get()), float(entry_11.get()), float(entry_111.get())],
-             [float(entry_2.get()), float(entry_22.get()), float(entry_222.get())],
-             [float(entry_3.get()), float(entry_33.get()), float(entry_333.get())]]
-        b = [float(b_entry.get()), float(b_entry1.get()), float(b_entry2.get())]
+        m_size = int(m_size_spinbox.get())
+        n_size = int(n_size_spinbox.get())
+        A = [[float(entries[i][j].get()) for j in range(n_size)] for i in range(m_size)]
+        b = [float(b_entries[i].get()) for i in range(m_size)]
         x = solve_linsys(A, b)
         result_label.config(text=x)
-        if x is not None:
-            fig.clear()
-            ax = fig.add_subplot(111)
-            ax.scatter(x, np.zeros(len(x)), label='Solution')
-            ax.legend()
-            canvas.draw()
-    except:
+    except ValueError:
         messagebox.showerror("Error", "Input is invalid. Please enter the correct matrix and vector.")
-root = tk.Tk()
-root.title("Linear Equation Solver")
 
-entry_1 = tk.Entry(root)
-entry_11 = tk.Entry(root)
-entry_111 = tk.Entry(root)
-entry_2 = tk.Entry(root)
-entry_22 = tk.Entry(root)
-entry_222 = tk.Entry(root)
-entry_3 = tk.Entry(root)
-entry_33 = tk.Entry(root)
-entry_333 = tk.Entry(root)
-
-b_entry = tk.Entry(root)
-b_entry1 = tk.Entry(root)
-b_entry2 = tk.Entry(root)
-
-solve_button = tk.Button(root, text="Solve", command=on_solve)
-
+solve_button = tk.Button(root, text="Solve", command=on_solve) #Solve button
+solve_button.grid(row=m_size + 3, column=n_size + 2)
+create_entries_button = tk.Button(root, text="Create Entries", command = lambda: create_entries(int(m_size_spinbox.get()), int(n_size_spinbox.get()) )) #Creates m x n entries
+create_entries_button.grid(row=m_size + 2, column=n_size + 4) #its location in grid
 label1 = tk.Label(root, text = "Matrix A")
 label1.grid(row=0, column=0, padx=10, pady=10)
 result_label = tk.Label(root, text="")
-result_label.grid(row=4, column=3)
-
-entry_1.grid(row=1, column=0)
-entry_11.grid(row=1, column=1)
-entry_111.grid(row=1, column=2)
-entry_2.grid(row=2, column=0)
-entry_22.grid(row=2, column=1)
-entry_222.grid(row=2, column=2)
-entry_3.grid(row=3, column=0)
-entry_33.grid(row=3, column=1)
-entry_333.grid(row=3, column=2)
-
+result_label.grid(row=m_size + 4, column=n_size + 3)
 label2 = tk.Label(root, text="Vector b")
-label2.grid(row=0, column=3, padx=10, pady=10)
-
-b_entry.grid(row=1, column=3)
-b_entry1.grid(row=2, column=3)
-b_entry2.grid(row=3, column=3)
-
-solve_button.grid(row=4, column=2)
-
-fig = Figure(figsize=(5, 4), dpi=100)
-canvas = FigureCanvasTkAgg(fig, root)
-fig = Figure(figsize=(5, 4), dpi=100)
-canvas = FigureCanvasTkAgg(fig, root)
-canvas.get_tk_widget().grid(row=5, column=0, columnspan=4, padx=10, pady=10)
+label2.grid(row=0, column=n_size, padx=10, pady=10)
 
 root.mainloop()
+
+# Currently Graph is WIP, i do not know which one is more appropriate
+
+# fig = Figure(figsize=(5, 4), dpi=100)
+# canvas = FigureCanvasTkAgg(fig, root)
+# fig = Figure(figsize=(5, 4), dpi=100)
+# canvas = FigureCanvasTkAgg(fig, root)
+# canvas.get_tk_widget().grid(row=5, column=0, columnspan=4, padx=10, pady=10)
