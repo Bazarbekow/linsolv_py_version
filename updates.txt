@@ -1,0 +1,3 @@
+Update 1: Add determinant
+Update 2: Fix Entries
+Update X: Find eigenvalues, eigenvectors
