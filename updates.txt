@@ -1,3 +1,5 @@
 Update 1: Add determinant
 Update 2: Fix Entries
+Update: Add inverse Matrix
+Update: Add Identity Matrix
 Update X: Find eigenvalues, eigenvectors

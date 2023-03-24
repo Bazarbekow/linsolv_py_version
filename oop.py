@@ -1,5 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QGridLayout, QWidget, QPushButton, QSpinBox, QFrame, QLineEdit, QMessageBox
+from PyQt5.QtCore import QEvent
+from PyQt5.QtGui import QIcon
 import numpy as np
 
 class LinearEquationSolver(QMainWindow):
@@ -13,7 +15,6 @@ class LinearEquationSolver(QMainWindow):
         self.b_entries = []
 
         self.setWindowTitle("Linear Equation Solver")
-
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
 
@@ -27,7 +28,7 @@ class LinearEquationSolver(QMainWindow):
         self.grid_layout.addWidget(self.n_size_spinbox, 1, self.n_size + 5)
 
         result_label = QLabel("")
-        self.grid_layout.addWidget(result_label,self.m_size + 2,self.n_size + 4)
+        self.grid_layout.addWidget(result_label,6,6)
 
         self.m_size_label = QLabel("Rows of A matrix:")
         self.grid_layout.addWidget(self.m_size_label, 0, self.n_size + 4)
@@ -53,34 +54,64 @@ class LinearEquationSolver(QMainWindow):
 
 
     def create_entries(self, m_size, n_size):
-        self.entries.clear()
-        self.b_entries.clear()
+        matrix_frame = self.central_widget.findChild(QFrame)
+        k = self.m_size - m_size
+        print("k = " + str(k))
+        if m_size < self.m_size:
+            for i in range(m_size, self.m_size):
+                for j in range(self.n_size):
+                    print("i: " + str(i) + " j: " + str(j) + "\n")
+                    entry = self.entries[i][j]
+                    self.grid_layout.removeWidget(entry)
+                    entry.deleteLater()
+                self.entries.pop()
+                entry = self.b_entries[i]
+                self.grid_layout.removeWidget(entry)
+                entry.deleteLater()
+                self.b_entries.pop()
 
-        matrix_frame = QFrame()
-        matrix_frame.setFrameStyle(QFrame.Panel | QFrame.Sunken)
-        self.grid_layout.addWidget(matrix_frame, 1, 0, m_size, n_size)
+        if n_size < self.n_size:
+            for i in range(m_size):
+                for j in range(n_size, self.n_size):
+                    print("i2: " + str(i) + " j2: " + str(j) + "\n")
+                    entry = self.entries[i][j]
+                    self.grid_layout.removeWidget(entry)
+                    entry.deleteLater()
+                    self.entries[i].pop()
 
         for i in range(m_size):
-            self.entries.append([])
+            while len(self.entries) <= i:
+                self.entries.append([])
             for j in range(n_size):
-                entry = QLineEdit("0")
-                entry.textChanged.connect(self.clear_zero)
+                while len(self.entries[i]) <= j:
+                    entry = QLineEdit("0")
+                    entry.installEventFilter(self)
+                    self.entries[i].append(entry)
+                entry = self.entries[i][j]
                 self.grid_layout.addWidget(entry, i+1, j)
-                self.entries[i].append(entry)
 
-            entry = QLineEdit("0")
-            entry.textChanged.connect(self.clear_zero)
+        for i in range(m_size):
+            while len(self.b_entries) <= i:
+                entry = QLineEdit("0")
+                entry.installEventFilter(self)
+                self.b_entries.append(entry)
+            entry = self.b_entries[i]
             self.grid_layout.addWidget(entry, i+1, n_size)
-            self.b_entries.append(entry)
 
         self.m_size = m_size
         self.n_size = n_size
             
-    def clear_zero(text):
-        if text == "0":
-            sender = QApplication.focusWidget()
-            sender.setText("")
-
+    def clear_zero(self):
+        sender = self.sender()
+        if sender.text() == "0":
+            sender.clear()
+            
+    def eventFilter(self, source, event):
+        if event.type() == QEvent.MouseButtonPress and isinstance(source, QLineEdit):
+            if source.text() == "0":
+                source.clear()
+        return super().eventFilter(source, event)
+    
     def solve_linsys(self, A, b):
         try:
             x = np.linalg.solve(A, b)
@@ -103,6 +134,7 @@ class LinearEquationSolver(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon('icon.ico'))
     linear_equation_solver = LinearEquationSolver()
     linear_equation_solver.show()
     sys.exit(app.exec_())
