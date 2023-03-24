@@ -52,7 +52,36 @@ class LinearEquationSolver(QMainWindow):
         label2 = QLabel("Vector b")
         self.grid_layout.addWidget(label2, 0, self.n_size)
 
+        self.setStyleSheet("""
+            QMainWindow {
+                background-color: #FFFFFF;
+            }
 
+            QLineEdit {
+                background-color: #FFFFFF;
+                border: 1px solid #DDDDDD;
+                padding: 6px;
+                font-size: 14px;
+                color: #333333;
+            }
+
+            QLabel {
+                font-size: 14px;
+                color: #333333;
+            }
+
+            QPushButton {
+                background-color: #F3A712;
+                border: none;
+                color: #FFFFFF;
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            QPushButton:hover {
+                background-color: #F3D39C;
+            }
+        """)
     def create_entries(self, m_size, n_size):
         matrix_frame = self.central_widget.findChild(QFrame)
         k = self.m_size - m_size
