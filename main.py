@@ -4,7 +4,7 @@ from tkinter import messagebox
 import numpy as np
 #from numpy import linalg
 
-
+#Made in more OOP-oriented, see oop.py
 root = tk.Tk()
 root.title("Linear Equation Solver")
 photo = tk.PhotoImage(file = "icon.png")
