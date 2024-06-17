@@ -66,6 +66,12 @@ class LinearEquationSolver(QMainWindow):
             QMainWindow {
                 background-color: #FFFFFF;
             }
+            QSpinBox {
+                background-color: #FFFFFF;
+                color: #808080;
+                font-size: 14px;
+                padding: 5px;
+            }
 
             QLineEdit {
                 background-color: #FFFFFF;
@@ -90,6 +96,10 @@ class LinearEquationSolver(QMainWindow):
 
             QPushButton:hover {
                 background-color: #F3D39C;
+            }
+                           
+            QMessageBox QLabel {
+                color: #FFFFFF;
             }
         """)
     def create_entries(self, m_size, n_size):
@@ -168,6 +178,7 @@ class LinearEquationSolver(QMainWindow):
             x = self.solve_linsys(A, b)
             result_label = self.central_widget.findChild(QLabel, "")
             result_label.setText("Solution set: " + str(x))
+            QMessageBox.information(self, 'Solution', str(x))
         except ValueError:
             QMessageBox.critical(self, "Error", "Input is invalid. Please enter the correct matrix and vector.")
 
